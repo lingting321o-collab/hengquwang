@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>我的订单 - 横渠网</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <header class="dash-header"><div class="inner">
+    <a href="/"><img src="assets/footer-logo.png" alt="横渠网"></a><h1>用户中心</h1>
+    <nav><a href="/">返回首页</a><button id="logoutButton">退出登录</button></nav>
+  </div></header>
+  <main class="page">
+    <section class="welcome"><div><h2 id="welcomeTitle">我的科研服务</h2><p>查看预约订单和定制需求的处理进度</p></div></section>
+    <section class="panel"><div class="panel-head"><h3>测试预约</h3></div><div class="table-wrap" id="reservationTable"></div></section>
+    <section class="panel"><div class="panel-head"><h3>定制需求</h3></div><div class="table-wrap" id="demandTable"></div></section>
+  </main>
+  <div class="toast"></div>
+  <script src="account.js"></script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="横渠科研共享服务平台">
+  <title>横渠网 - 全国性的科研共享平台</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <span class="service-line">☎ <b>029-88186855</b></span>
+      <div class="top-links">
+        <a href="/account">我的订单</a><a href="#pay">会员</a><a href="#footer">合作入驻</a>
+        <a href="#footer">关于我们</a><a href="#experts">人才招聘</a><a href="#results">科研文库</a>
+        <a href="#footer">关注公众号</a>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container header-main">
+      <a class="brand" href="#top" aria-label="横渠网首页">
+        <img src="assets/logo.jpg" alt="横渠网">
+      </a>
+      <div class="search-area">
+        <form class="search-box" id="searchForm">
+          <span class="search-icon">⌕</span>
+          <input id="searchInput" type="search" placeholder="请输入您想搜索的内容" aria-label="搜索">
+          <button type="submit">搜索</button>
+        </form>
+        <div class="hot-words">
+          <button data-search="X射线光电子能谱">X射线光电子能谱 <span>HOT</span></button>
+          <button data-search="电感耦合等离子体">ICP-MS</button>
+          <button data-search="电子显微镜">电子显微镜</button>
+        </div>
+      </div>
+      <div class="header-actions">
+        <a class="btn btn-outline" href="#pay">预付</a>
+        <button class="btn demand-trigger" type="button">发布需求</button>
+      </div>
+      <div class="auth" id="authArea">
+        <button type="button" data-auth="login">登录</button><i></i>
+        <button type="button" data-auth="register">注册</button>
+      </div>
+      <button class="menu-toggle" aria-label="打开导航" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <nav class="main-nav">
+    <div class="container">
+      <ul>
+        <li class="active"><a href="#top">首页</a></li>
+        <li><a href="#hot">材料测试</a></li>
+        <li><a href="#hot">生物服务</a></li>
+        <li><a href="#hot">环境检测</a></li>
+        <li><a href="#process">模拟计算</a></li>
+        <li><a href="#advantages">设备共享</a></li>
+        <li><a href="#results">科技成果</a></li>
+        <li><a href="#footer">行业服务</a></li>
+        <li><a href="#results">科研绘图</a></li>
+        <li><a href="#process">数据分析</a></li>
+        <li><a href="#papers">论文服务</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main id="top">
+    <section class="hero" aria-label="活动轮播">
+      <div class="slides">
+        <article class="slide active"><img src="assets/hero-1.png" alt="科研劳动月热门测试让利券"></article>
+        <article class="slide"><img src="assets/hero-2.png" alt="初夏荐面礼邀新赚佣金"></article>
+        <article class="slide"><img src="assets/hero-3.png" alt="毕业季预存助跑计划"></article>
+        <article class="slide"><img src="assets/hero-4.png" alt="科研成果活动"></article>
+      </div>
+      <div class="container hero-overlay">
+        <aside class="activity-panel">
+          <h2><span>活动专区</span></h2>
+          <a href="#hot">◆ 初夏“荐”面礼·邀新赚佣金</a>
+          <a href="#hot">◆ 科研劳动月·热门测试让利券</a>
+          <a href="#papers">◆ 成果回响，谢礼有您</a>
+          <a href="#pay">◆ 毕业季·预存助跑计划</a>
+        </aside>
+      </div>
+      <div class="slider-dots" role="tablist" aria-label="切换轮播">
+        <button class="active" aria-label="第1张"></button><button aria-label="第2张"></button>
+        <button aria-label="第3张"></button><button aria-label="第4张"></button>
+      </div>
+    </section>
+
+    <section class="quick-entries">
+      <div class="container entry-grid">
+        <a class="entry-card" href="#contact"><h3>邀请有礼</h3><p>多邀多得，上不封顶</p><img src="assets/entry-1.png" alt=""></a>
+        <a class="entry-card" href="#papers"><h3>论文致谢</h3><p>最高2000元致谢返现</p><img src="assets/entry-2.png" alt=""></a>
+        <a class="entry-card" href="#pay"><h3>预付优惠</h3><p>最高享12%赠送金</p><img src="assets/entry-3.png" alt=""></a>
+        <a class="entry-card" href="#pay"><h3>加入会员</h3><p>免单券、首单先享后付</p><img src="assets/entry-4.png" alt=""></a>
+      </div>
+    </section>
+
+    <section class="section" id="hot">
+      <div class="container">
+        <div class="section-title"><h2>热门推荐</h2><p>让每一个科研工作者，都能够享受互联网时代做实验的便利</p></div>
+        <div class="product-grid" id="productGrid"><p class="loading-state">正在加载科研项目...</p></div>
+      </div>
+    </section>
+
+    <section class="section experts" id="experts">
+      <div class="container">
+        <div class="section-title"><h2>科研名师</h2></div>
+        <div class="expert-grid">
+          <article><img src="assets/teacher-1.png" alt="陈玉春"><h3>陈玉春</h3><p>工学博士，陕西省工程热物理学会理事，获省部级科技奖多项。</p></article>
+          <article><img src="assets/teacher-2.webp" alt="田文超"><h3>田文超</h3><p>国家级电子封装技术特色专业负责人，入选全球前2%顶尖科学家榜单。</p></article>
+          <article><img src="assets/teacher-3.webp" alt="冯雷"><h3>冯雷</h3><p>陕西省高层次青年拔尖人才，青年科技新星，国家自然科学基金函评专家。</p></article>
+          <article><img src="assets/teacher-4.webp" alt="刘智"><h3>刘智</h3><p>教授，空间光电国家工程研究中心主任，主持国家及省部级项目40余项。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="process">
+      <div class="container">
+        <div class="section-title"><h2>服务流程</h2><p>精准定制，流程化全面服务，满足各类科研需求</p></div>
+        <div class="tabs process-tabs">
+          <button class="active" data-tab="test">测试流程</button><button data-tab="draw">绘图流程</button><button data-tab="analysis">分析/计算流程</button>
+        </div>
+        <div class="process-grid" id="processGrid"></div>
+      </div>
+    </section>
+
+    <section class="section payment" id="pay">
+      <div class="container">
+        <div class="section-title"><h2>多种支付方式</h2><p>支持多种支付方式，特推课题组团体支付</p></div>
+        <div class="payment-grid">
+          <article><img src="assets/pay-1.png" alt=""><div><h3>现金支付</h3><p>支持支付宝、微信等线上支付渠道完成费用支付</p></div></article>
+          <article><img src="assets/pay-2.png" alt=""><div><h3>团体支付</h3><p>师生共用团体账户，统一支付实验项目相关费用</p></div></article>
+          <article><img src="assets/pay-3.png" alt=""><div><h3>预付支付</h3><p>通过优惠渠道充值，使用账户余额支付实验费用</p></div></article>
+          <article><img src="assets/pay-4.png" alt=""><div><h3>信用金支付</h3><p>会员审核通过后获得信用额度，消费后次月还款</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="advantages">
+      <div class="container">
+        <div class="section-title"><h2>平台优势</h2><p>横渠，用心让科研落地</p></div>
+        <div class="advantage-grid">
+          <article><img src="assets/adv-1.png" alt=""><h3>便捷</h3><p>为全球用户提供服务</p></article>
+          <article><img src="assets/adv-2.png" alt=""><h3>专业</h3><p>专业服务团队</p></article>
+          <article><img src="assets/adv-3.png" alt=""><h3>快速</h3><p>全程客服跟踪</p></article>
+          <article><img src="assets/adv-4.png" alt=""><h3>专属客服</h3><p>贴心全面服务</p></article>
+          <article><img src="assets/adv-5.png" alt=""><h3>无需垫资</h3><p>先付后还款</p></article>
+        </div>
+        <div class="stat-grid">
+          <div><b>4.5+</b><span>平均测试出结果时间</span></div><div><b>3000+</b><span>每天处理样品数</span></div>
+          <div><b>98.8%+</b><span>客户满意度</span></div><div><b>29个</b><span>全国办事处</span></div><div><b>30w+</b><span>服务全球用户</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section papers" id="papers">
+      <div class="container">
+        <div class="section-title light"><h2>部分用户致谢论文</h2><p>科研，我要发CNS。论文致谢横渠，最高奖励5000元红包。</p></div>
+        <div class="paper-table-wrap">
+          <table>
+            <thead><tr><th>期刊信息</th><th>作者信息</th><th>服务项目</th><th>致谢内容</th><th>论文链接</th></tr></thead>
+            <tbody>
+              <tr><td>Advanced Functional Materials</td><td>李老师<br>西北工业大学</td><td>XPS测试</td><td>感谢横渠平台提供分析测试支持</td><td><a href="#papers">查看文章</a></td></tr>
+              <tr><td>Journal of Materials Chemistry A</td><td>王同学<br>西安交通大学</td><td>电镜表征</td><td>感谢平台工程师的专业技术支持</td><td><a href="#papers">查看文章</a></td></tr>
+              <tr><td>Chemical Engineering Journal</td><td>赵老师<br>中国科学院</td><td>材料测试</td><td>感谢横渠科研共享平台协助测试</td><td><a href="#papers">查看文章</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section results" id="results">
+      <div class="container">
+        <div class="section-title"><h2>科技成果</h2><p>用心让科研落地</p></div>
+        <div class="tabs result-tabs">
+          <button class="active">专利技术</button><button>专利申请权</button><button>软件著作权</button><button>新设备、新材料</button>
+        </div>
+        <div class="result-grid">
+          <article><div class="result-visual violet">01<span>TECHNOLOGY</span></div><h3>高效复合材料制备关键技术</h3><p>面向新能源与先进制造领域的材料技术成果</p><div><b>化工、新材料</b><time>2026-04-08</time></div></article>
+          <article><div class="result-visual blue">02<span>INNOVATION</span></div><h3>智能检测数据分析系统</h3><p>多源实验数据智能分析与可视化软件平台</p><div><b>软件技术</b><time>2026-03-21</time></div></article>
+          <article><div class="result-visual orange">03<span>RESEARCH</span></div><h3>新型环境污染物处理工艺</h3><p>低能耗、高效率的环境治理技术解决方案</p><div><b>环境工程</b><time>2026-02-16</time></div></article>
+          <article><div class="result-visual teal">04<span>TRANSFER</span></div><h3>精密仪器校准与控制装置</h3><p>适用于科研仪器的高精度智能控制模块</p><div><b>仪器设备</b><time>2026-01-30</time></div></article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" id="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand"><img src="assets/footer-logo.png" alt="横渠网"><b>029-88186855</b><span>服务热线</span><button class="btn inquiry-trigger" type="button">在线咨询</button></div>
+      <div class="footer-content">
+        <form class="footer-search"><input placeholder="请输入您想搜索的内容"><button>搜索</button></form>
+        <div class="footer-links">
+          <div><h3>公司相关</h3><a href="#">关于我们</a><a href="#">联系我们</a><a href="#">资质证照</a></div>
+          <div><h3>平台指南</h3><a href="#">新手帮助</a><a href="#">合作加盟</a><a href="#">服务流程</a></div>
+          <div><h3>协议条款</h3><a href="#">注册协议</a><a href="#">隐私协议</a><a href="#">意见反馈</a></div>
+          <div class="contact" id="contact"><h3>联系我们</h3><p>9:00—18:00（法定节假日除外）</p><p>总部地址：西安市雁塔区太白南路与科技路交叉口科创大厦1901室</p><p>加入我们：hqyiwang@163.com</p></div>
+          <div><h3>关注我们</h3><img class="qr" src="assets/qr.jpeg" alt="公众号二维码"></div>
+        </div>
+      </div>
+    </div>
+    <div class="copyright">Copyright © 2026 西安横渠科技有限公司 版权所有</div>
+  </footer>
+
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" type="button" aria-label="关闭">×</button>
+      <h2 id="modalTitle"></h2>
+      <p class="modal-intro" id="modalIntro"></p>
+      <form id="modalForm"></form>
+    </section>
+  </div>
+  <div class="toast" role="status" aria-live="polite"></div>
+  <aside class="floating-tools"><button type="button" id="inquiryTrigger">咨询</button><a href="#top">顶部</a></aside>
+  <script src="script.js"></script>
+</body>
+</html>
