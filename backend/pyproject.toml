@@ -1,0 +1,9 @@
+[project]
+name = "hengqu-api"
+version = "1.0.0"
+description = "Hengqu research services API"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi[standard]>=0.128.1",
+  "psycopg[binary]>=3.2.0"
+]
