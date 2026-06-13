@@ -6,14 +6,16 @@ export default defineConfig({
   plugins: [
     {
       name: "prepare-static-site",
-      transformIndexHtml(html) {
-        return html.replace(
-          /<script src="(script|account|admin)\.js"><\/script>/g,
-          '<script type="module" src="/$1.js"></script>'
-        );
-      },
       writeBundle() {
-        cpSync("assets", "dist/assets", { recursive: true });
+        const root = import.meta.dirname;
+        const output = resolve(root, "dist");
+
+        cpSync(resolve(root, "assets"), resolve(output, "assets"), {
+          recursive: true
+        });
+        for (const script of ["script.js", "account.js", "admin.js"]) {
+          cpSync(resolve(root, script), resolve(output, script));
+        }
       }
     }
   ],
