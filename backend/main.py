@@ -9,7 +9,6 @@ import psycopg
 from fastapi import Cookie, FastAPI, HTTPException, Request, Response
 from psycopg.rows import dict_row
 
-
 app = FastAPI(title="Hengqu API")
 SESSION_TTL = 7 * 24 * 60 * 60
 SCHEMA_READY = False
@@ -23,44 +22,12 @@ PRODUCTS = [
 ]
 
 SCHEMA_STATEMENTS = [
-    """CREATE TABLE IF NOT EXISTS users (
-      id BIGSERIAL PRIMARY KEY, name TEXT NOT NULL,
-      email TEXT NOT NULL UNIQUE, phone TEXT NOT NULL DEFAULT '',
-      password_hash TEXT NOT NULL, password_salt TEXT NOT NULL,
-      role TEXT NOT NULL DEFAULT 'user', created_at TIMESTAMPTZ DEFAULT NOW()
-    )""",
-    """CREATE TABLE IF NOT EXISTS sessions (
-      token TEXT PRIMARY KEY, user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      expires_at BIGINT NOT NULL, created_at TIMESTAMPTZ DEFAULT NOW()
-    )""",
-    """CREATE TABLE IF NOT EXISTS products (
-      id BIGSERIAL PRIMARY KEY, title TEXT NOT NULL, category TEXT NOT NULL,
-      instrument TEXT NOT NULL DEFAULT '', image TEXT NOT NULL DEFAULT '',
-      tested_count INTEGER NOT NULL DEFAULT 0, turnaround TEXT NOT NULL DEFAULT '',
-      satisfaction TEXT NOT NULL DEFAULT '', description TEXT NOT NULL DEFAULT '',
-      featured INTEGER NOT NULL DEFAULT 1, active INTEGER NOT NULL DEFAULT 1,
-      created_at TIMESTAMPTZ DEFAULT NOW()
-    )""",
-    """CREATE TABLE IF NOT EXISTS reservations (
-      id BIGSERIAL PRIMARY KEY, order_no TEXT NOT NULL UNIQUE,
-      user_id BIGINT REFERENCES users(id) ON DELETE SET NULL,
-      product_id BIGINT NOT NULL REFERENCES products(id),
-      contact_name TEXT NOT NULL, phone TEXT NOT NULL, organization TEXT NOT NULL DEFAULT '',
-      sample_info TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '',
-      status TEXT NOT NULL DEFAULT '待确认', created_at TIMESTAMPTZ DEFAULT NOW()
-    )""",
-    """CREATE TABLE IF NOT EXISTS demands (
-      id BIGSERIAL PRIMARY KEY, demand_no TEXT NOT NULL UNIQUE,
-      user_id BIGINT REFERENCES users(id) ON DELETE SET NULL,
-      title TEXT NOT NULL, category TEXT NOT NULL, budget TEXT NOT NULL DEFAULT '',
-      contact_name TEXT NOT NULL, phone TEXT NOT NULL, details TEXT NOT NULL,
-      status TEXT NOT NULL DEFAULT '待联系', created_at TIMESTAMPTZ DEFAULT NOW()
-    )""",
-    """CREATE TABLE IF NOT EXISTS inquiries (
-      id BIGSERIAL PRIMARY KEY, user_id BIGINT REFERENCES users(id) ON DELETE SET NULL,
-      name TEXT NOT NULL, phone TEXT NOT NULL, message TEXT NOT NULL,
-      status TEXT NOT NULL DEFAULT '未处理', created_at TIMESTAMPTZ DEFAULT NOW()
-    )""",
+    """CREATE TABLE IF NOT EXISTS users (id BIGSERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL UNIQUE, phone TEXT NOT NULL DEFAULT '', password_hash TEXT NOT NULL, password_salt TEXT NOT NULL, role TEXT NOT NULL DEFAULT 'user', created_at TIMESTAMPTZ DEFAULT NOW())""",
+    """CREATE TABLE IF NOT EXISTS sessions (token TEXT PRIMARY KEY, user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE, expires_at BIGINT NOT NULL, created_at TIMESTAMPTZ DEFAULT NOW())""",
+    """CREATE TABLE IF NOT EXISTS products (id BIGSERIAL PRIMARY KEY, title TEXT NOT NULL, category TEXT NOT NULL, instrument TEXT NOT NULL DEFAULT '', image TEXT NOT NULL DEFAULT '', tested_count INTEGER NOT NULL DEFAULT 0, turnaround TEXT NOT NULL DEFAULT '', satisfaction TEXT NOT NULL DEFAULT '', description TEXT NOT NULL DEFAULT '', featured INTEGER NOT NULL DEFAULT 1, active INTEGER NOT NULL DEFAULT 1, created_at TIMESTAMPTZ DEFAULT NOW())""",
+    """CREATE TABLE IF NOT EXISTS reservations (id BIGSERIAL PRIMARY KEY, order_no TEXT NOT NULL UNIQUE, user_id BIGINT REFERENCES users(id) ON DELETE SET NULL, product_id BIGINT NOT NULL REFERENCES products(id), contact_name TEXT NOT NULL, phone TEXT NOT NULL, organization TEXT NOT NULL DEFAULT '', sample_info TEXT NOT NULL, requirements TEXT NOT NULL DEFAULT '', status TEXT NOT NULL DEFAULT '待确认', created_at TIMESTAMPTZ DEFAULT NOW())""",
+    """CREATE TABLE IF NOT EXISTS demands (id BIGSERIAL PRIMARY KEY, demand_no TEXT NOT NULL UNIQUE, user_id BIGINT REFERENCES users(id) ON DELETE SET NULL, title TEXT NOT NULL, category TEXT NOT NULL, budget TEXT NOT NULL DEFAULT '', contact_name TEXT NOT NULL, phone TEXT NOT NULL, details TEXT NOT NULL, status TEXT NOT NULL DEFAULT '待联系', created_at TIMESTAMPTZ DEFAULT NOW())""",
+    """CREATE TABLE IF NOT EXISTS inquiries (id BIGSERIAL PRIMARY KEY, user_id BIGINT REFERENCES users(id) ON DELETE SET NULL, name TEXT NOT NULL, phone TEXT NOT NULL, message TEXT NOT NULL, status TEXT NOT NULL DEFAULT '未处理', created_at TIMESTAMPTZ DEFAULT NOW())""",
 ]
 
 
@@ -91,20 +58,13 @@ def ensure_schema(connection):
     for statement in SCHEMA_STATEMENTS:
         connection.execute(statement)
     if connection.execute("SELECT COUNT(*) AS count FROM products").fetchone()["count"] == 0:
-        connection.executemany(
-            """INSERT INTO products
-            (title, category, instrument, image, tested_count, turnaround, satisfaction, description)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s)""",
-            PRODUCTS,
-        )
+        sql = """INSERT INTO products (title,category,instrument,image,tested_count,turnaround,satisfaction,description) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
+        for product in PRODUCTS:
+            connection.execute(sql, product)
     email = os.environ.get("ADMIN_EMAIL", "admin@hengqu.local").lower()
     if not connection.execute("SELECT id FROM users WHERE email=%s", (email,)).fetchone():
         salt, digest = password_hash(os.environ.get("ADMIN_PASSWORD", "Admin123!"))
-        connection.execute(
-            """INSERT INTO users(name,email,phone,password_hash,password_salt,role)
-            VALUES(%s,%s,%s,%s,%s,'admin')""",
-            ("系统管理员", email, "029-88186855", digest, salt),
-        )
+        connection.execute("""INSERT INTO users(name,email,phone,password_hash,password_salt,role) VALUES(%s,%s,%s,%s,%s,'admin')""", ("系统管理员", email, "029-88186855", digest, salt))
     connection.commit()
     SCHEMA_READY = True
 
@@ -113,12 +73,7 @@ def current_user(token):
     if not token:
         return None
     with database() as connection:
-        return connection.execute(
-            """SELECT users.id,users.name,users.email,users.phone,users.role
-            FROM sessions JOIN users ON users.id=sessions.user_id
-            WHERE sessions.token=%s AND sessions.expires_at>%s""",
-            (token, int(time.time())),
-        ).fetchone()
+        return connection.execute("""SELECT users.id,users.name,users.email,users.phone,users.role FROM sessions JOIN users ON users.id=sessions.user_id WHERE sessions.token=%s AND sessions.expires_at>%s""", (token, int(time.time()))).fetchone()
 
 
 def require_user(token, admin=False):
@@ -156,7 +111,9 @@ def products(q: str = "", category: str = ""):
         if category.strip():
             sql += " AND category=%s"
             params.append(category.strip())
-        return {"items": connection.execute(sql + " ORDER BY featured DESC,id LIMIT 50", params).fetchall()}
+        sql += " ORDER BY featured DESC,id LIMIT 50"
+        rows = connection.execute(sql, params).fetchall() if params else connection.execute(sql).fetchall()
+        return {"items": rows}
 
 
 @app.post("/register")
@@ -168,11 +125,7 @@ async def register(request: Request, response: Response):
     salt, digest = password_hash(data["password"])
     try:
         with database() as connection:
-            user = connection.execute(
-                """INSERT INTO users(name,email,phone,password_hash,password_salt)
-                VALUES(%s,%s,%s,%s,%s) RETURNING id,name,email,phone,role""",
-                (data["name"].strip(), data["email"].strip().lower(), data.get("phone", "").strip(), digest, salt),
-            ).fetchone()
+            user = connection.execute("""INSERT INTO users(name,email,phone,password_hash,password_salt) VALUES(%s,%s,%s,%s,%s) RETURNING id,name,email,phone,role""", (data["name"].strip(), data["email"].strip().lower(), data.get("phone", "").strip(), digest, salt)).fetchone()
             connection.commit()
     except psycopg.errors.UniqueViolation:
         raise HTTPException(409, "该邮箱已注册")
@@ -198,10 +151,7 @@ async def login(request: Request, response: Response):
 def create_session(user, response):
     token = secrets.token_urlsafe(32)
     with database() as connection:
-        connection.execute(
-            "INSERT INTO sessions(token,user_id,expires_at) VALUES(%s,%s,%s)",
-            (token, user["id"], int(time.time()) + SESSION_TTL),
-        )
+        connection.execute("INSERT INTO sessions(token,user_id,expires_at) VALUES(%s,%s,%s)", (token, user["id"], int(time.time()) + SESSION_TTL))
         connection.commit()
     response.set_cookie("hq_session", token, max_age=SESSION_TTL, httponly=True, samesite="lax", secure=True)
 
@@ -223,11 +173,7 @@ async def reservation(request: Request, hq_session: str | None = Cookie(default=
     required(data, ("product_id", "contact_name", "phone", "sample_info"))
     order_no = "HQ" + time.strftime("%Y%m%d") + secrets.token_hex(3).upper()
     with database() as connection:
-        connection.execute(
-            """INSERT INTO reservations(order_no,user_id,product_id,contact_name,phone,organization,sample_info,requirements)
-            VALUES(%s,%s,%s,%s,%s,%s,%s,%s)""",
-            (order_no, user["id"], int(data["product_id"]), data["contact_name"], data["phone"], data.get("organization", ""), data["sample_info"], data.get("requirements", "")),
-        )
+        connection.execute("""INSERT INTO reservations(order_no,user_id,product_id,contact_name,phone,organization,sample_info,requirements) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)""", (order_no, user["id"], int(data["product_id"]), data["contact_name"], data["phone"], data.get("organization", ""), data["sample_info"], data.get("requirements", "")))
         connection.commit()
     return {"ok": True, "order_no": order_no}
 
@@ -239,11 +185,7 @@ async def demand(request: Request, hq_session: str | None = Cookie(default=None)
     required(data, ("title", "category", "contact_name", "phone", "details"))
     demand_no = "XQ" + time.strftime("%Y%m%d") + secrets.token_hex(3).upper()
     with database() as connection:
-        connection.execute(
-            """INSERT INTO demands(demand_no,user_id,title,category,budget,contact_name,phone,details)
-            VALUES(%s,%s,%s,%s,%s,%s,%s,%s)""",
-            (demand_no, user["id"], data["title"], data["category"], data.get("budget", ""), data["contact_name"], data["phone"], data["details"]),
-        )
+        connection.execute("""INSERT INTO demands(demand_no,user_id,title,category,budget,contact_name,phone,details) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)""", (demand_no, user["id"], data["title"], data["category"], data.get("budget", ""), data["contact_name"], data["phone"], data["details"]))
         connection.commit()
     return {"ok": True, "demand_no": demand_no}
 
@@ -254,10 +196,7 @@ async def inquiry(request: Request, hq_session: str | None = Cookie(default=None
     required(data, ("name", "phone", "message"))
     user = current_user(hq_session)
     with database() as connection:
-        connection.execute(
-            "INSERT INTO inquiries(user_id,name,phone,message) VALUES(%s,%s,%s,%s)",
-            (user["id"] if user else None, data["name"], data["phone"], data["message"]),
-        )
+        connection.execute("INSERT INTO inquiries(user_id,name,phone,message) VALUES(%s,%s,%s,%s)", (user["id"] if user else None, data["name"], data["phone"], data["message"]))
         connection.commit()
     return {"ok": True}
 
@@ -266,11 +205,7 @@ async def inquiry(request: Request, hq_session: str | None = Cookie(default=None
 def my_orders(hq_session: str | None = Cookie(default=None)):
     user = require_user(hq_session)
     with database() as connection:
-        reservations = connection.execute(
-            """SELECT reservations.*,products.title AS product_title FROM reservations
-            JOIN products ON products.id=reservations.product_id WHERE user_id=%s ORDER BY reservations.id DESC""",
-            (user["id"],),
-        ).fetchall()
+        reservations = connection.execute("""SELECT reservations.*,products.title AS product_title FROM reservations JOIN products ON products.id=reservations.product_id WHERE user_id=%s ORDER BY reservations.id DESC""", (user["id"],)).fetchall()
         demands = connection.execute("SELECT * FROM demands WHERE user_id=%s ORDER BY id DESC", (user["id"],)).fetchall()
     return {"reservations": reservations, "demands": demands}
 
@@ -286,15 +221,8 @@ def admin_summary(hq_session: str | None = Cookie(default=None)):
 def admin_orders(hq_session: str | None = Cookie(default=None)):
     require_user(hq_session, True)
     with database() as connection:
-        reservations = connection.execute(
-            """SELECT reservations.*,products.title AS product_title,COALESCE(users.email,'') AS user_email
-            FROM reservations JOIN products ON products.id=reservations.product_id
-            LEFT JOIN users ON users.id=reservations.user_id ORDER BY reservations.id DESC LIMIT 100"""
-        ).fetchall()
-        demands = connection.execute(
-            """SELECT demands.*,COALESCE(users.email,'') AS user_email FROM demands
-            LEFT JOIN users ON users.id=demands.user_id ORDER BY demands.id DESC LIMIT 100"""
-        ).fetchall()
+        reservations = connection.execute("""SELECT reservations.*,products.title AS product_title,COALESCE(users.email,'') AS user_email FROM reservations JOIN products ON products.id=reservations.product_id LEFT JOIN users ON users.id=reservations.user_id ORDER BY reservations.id DESC LIMIT 100""").fetchall()
+        demands = connection.execute("""SELECT demands.*,COALESCE(users.email,'') AS user_email FROM demands LEFT JOIN users ON users.id=demands.user_id ORDER BY demands.id DESC LIMIT 100""").fetchall()
         inquiries = connection.execute("SELECT * FROM inquiries ORDER BY id DESC LIMIT 100").fetchall()
     return {"reservations": reservations, "demands": demands, "inquiries": inquiries}
 
