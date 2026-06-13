@@ -1,4 +1,4 @@
-import { cpSync } from "node:fs";
+import { cpSync, mkdirSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { defineConfig } from "vite";
 
@@ -9,10 +9,14 @@ export default defineConfig({
       writeBundle() {
         const root = import.meta.dirname;
         const output = resolve(root, "dist");
+        const assetOutput = resolve(output, "assets");
 
-        cpSync(resolve(root, "assets"), resolve(output, "assets"), {
-          recursive: true
-        });
+        mkdirSync(assetOutput, { recursive: true });
+        for (const file of readdirSync(root)) {
+          if (/\.(png|jpe?g|webp)$/i.test(file)) {
+            cpSync(resolve(root, file), resolve(assetOutput, file));
+          }
+        }
         for (const script of ["script.js", "account.js", "admin.js"]) {
           cpSync(resolve(root, script), resolve(output, script));
         }
